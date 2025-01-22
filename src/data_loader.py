@@ -6,55 +6,99 @@ Users must upload a GeoJSON file for boundaries and at least one CSV for securit
 
 import geopandas as gpd
 import pandas as pd
+from shapely.geometry import Point
+from rich.console import Console
+from rich.theme import Theme
+
+# Define the theme
+custom_theme = Theme({
+    "success": "bold #028090",
+    "info": "bold #080357",
+    "warning": "bold #F9B5AC",
+    "error": "bold #89023E",
+    "highlight": "bold #F4D35E"
+})
+console = Console(theme=custom_theme)
 
 class DataLoader:
-    def __init__(self):
+    def __init__(self, boundaries_path, dataset_paths):
+        """
+        Initialize the DataLoader class.
+
+        Parameters:
+        - boundaries_path (str): Path to the geospatial boundaries file (GeoJSON, Shapefile, or GeoPackage).
+        - dataset_paths (list of str): List of paths to point-based spatial datasets.
+        """
+        self.boundaries_path = boundaries_path
+        self.dataset_paths = dataset_paths
         self.boundaries = None
-        self.security_data = None
+        self.datasets = []
 
-    def load_boundaries(self, filepath):
+    def load_boundaries(self):
         """
-        Load and validate the GeoJSON file defining the political boundaries.
-        
-        Parameters:
-        filepath (str): Path to the GeoJSON file.
+        Load and validate the geospatial boundaries file.
 
         Returns:
-        GeoDataFrame: Loaded boundaries.
+        - GeoDataFrame containing the boundaries.
         """
         try:
-            self.boundaries = gpd.read_file(filepath)
-            if not self.boundaries.crs:
-                raise ValueError("GeoJSON file must have a defined coordinate reference system (CRS).")
-        except Exception as e:
-            raise ValueError(f"Error loading boundaries: {e}")
-        return self.boundaries
+            if self.boundaries_path.endswith('.geojson'):
+                self.boundaries = gpd.read_file(self.boundaries_path)
+            elif self.boundaries_path.endswith('.shp'):
+                self.boundaries = gpd.read_file(self.boundaries_path)
+            elif self.boundaries_path.endswith('.gpkg'):
+                self.boundaries = gpd.read_file(self.boundaries_path, layer=0)
+            else:
+                raise ValueError("Unsupported file format. Please provide a GeoJSON, Shapefile, or GeoPackage.")
 
-    def load_security_data(self, filepath):
+            if self.boundaries.empty:
+                raise ValueError("The boundaries file is empty.")
+
+            console.print(f"[success]Boundaries loaded successfully from {self.boundaries_path}![/success]", style="success")
+            return self.boundaries
+
+        except Exception as e:
+            console.print(f"[error]Error loading boundaries: {e}[/error]", style="error")
+            raise RuntimeError(f"Error loading boundaries: {e}")
+
+    def load_datasets(self):
         """
-        Load and validate the CSV file containing security-related data.
-        
-        Parameters:
-        filepath (str): Path to the CSV file.
+        Load and validate the point-based spatial datasets.
 
         Returns:
-        DataFrame: Loaded security data.
+        - List of GeoDataFrames containing the datasets.
         """
-        try:
-            self.security_data = pd.read_csv(filepath)
-            if 'zone_id' not in self.security_data.columns:
-                raise ValueError("CSV file must contain a 'zone_id' column.")
-        except Exception as e:
-            raise ValueError(f"Error loading security data: {e}")
-        return self.security_data
+        for path in self.dataset_paths:
+            try:
+                if path.endswith('.csv'):
+                    # Load CSV with specified encoding and ensure it has LATITUDE and LONGITUDE columns
+                    df = pd.read_csv(path, encoding='latin1')  # Adjust encoding if needed
+                    if 'LONGITUDE' not in df.columns or 'LATITUDE' not in df.columns:
+                        raise ValueError(f"The dataset at {path} must contain 'LONGITUDE' and 'LATITUDE' columns.")
 
-    def get_data(self):
-        """
-        Retrieve loaded boundaries and security data.
+                    # Convert to GeoDataFrame with Point geometry
+                    geometry = [Point(xy) for xy in zip(df['LONGITUDE'], df['LATITUDE'])]
+                    dataset = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+                else:
+                    dataset = gpd.read_file(path)
 
-        Returns:
-        tuple: (GeoDataFrame, DataFrame)
-        """
-        if self.boundaries is None or self.security_data is None:
-            raise ValueError("Both boundaries and security data must be loaded.")
-        return self.boundaries, self.security_data
+                if dataset.empty:
+                    raise ValueError(f"The dataset at {path} is empty.")
+
+                # Remove points outside the boundaries
+                if self.boundaries is not None:
+                    initial_count = len(dataset)
+                    dataset = dataset[dataset.geometry.within(self.boundaries.unary_union)]
+                    removed_points = initial_count - len(dataset)
+
+                    if removed_points > 0:
+                        console.print(f"[info]{removed_points} points removed as they were outside the boundaries for dataset {path}.[/info]", style="info")
+
+                self.datasets.append(dataset)
+                console.print(f"[success]Dataset loaded successfully from {path}![/success]", style="success")
+
+            except Exception as e:
+                console.print(f"[error]Error loading dataset at {path}: {e}[/error]", style="error")
+                raise RuntimeError(f"Error loading dataset at {path}: {e}")
+
+        return self.datasets
