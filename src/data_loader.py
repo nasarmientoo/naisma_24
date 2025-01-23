@@ -9,8 +9,8 @@ import pandas as pd
 from shapely.geometry import Point
 from rich.console import Console
 from rich.theme import Theme
+from rich.table import Table
 
-# Define the theme
 custom_theme = Theme({
     "success": "bold #028090",
     "info": "bold #080357",
@@ -19,6 +19,7 @@ custom_theme = Theme({
     "highlight": "bold #F4D35E"
 })
 console = Console(theme=custom_theme)
+
 
 class DataLoader:
     def __init__(self, boundaries_path, dataset_paths):
@@ -71,17 +72,26 @@ class DataLoader:
         for path in self.dataset_paths:
             try:
                 if path.endswith('.csv'):
-                    # Load CSV with specified encoding and ensure it has LATITUDE and LONGITUDE columns
-                    df = pd.read_csv(path, encoding='latin1')  # Adjust encoding if needed
-                    if 'LONGITUDE' not in df.columns or 'LATITUDE' not in df.columns:
+                    dataset = pd.read_csv(path, encoding='latin1')  
+                    if 'LONGITUDE' not in dataset.columns or 'LATITUDE' not in dataset.columns:
                         raise ValueError(f"The dataset at {path} must contain 'LONGITUDE' and 'LATITUDE' columns.")
-
+                    
                     # Convert to GeoDataFrame with Point geometry
-                    geometry = [Point(xy) for xy in zip(df['LONGITUDE'], df['LATITUDE'])]
-                    dataset = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+                    geometry = [Point(xy) for xy in zip(dataset['LONGITUDE'], dataset['LATITUDE'])]
+                    dataset = gpd.GeoDataFrame(dataset, geometry=geometry, crs="EPSG:4326")
                 else:
                     dataset = gpd.read_file(path)
+                
+                table = Table(title=f"Attributes in dataset: {path}", show_lines=True)
+                table.add_column("Attribute", justify="left", style="info")
+                table.add_column("Type", justify="left", style="highlight")
 
+                for column in dataset.columns:
+                    column_type = "Numerical" if pd.api.types.is_numeric_dtype(dataset[column]) else "Non-Numerical"
+                    table.add_row(column, column_type)
+
+                console.print(table)
+                    
                 if dataset.empty:
                     raise ValueError(f"The dataset at {path} is empty.")
 
