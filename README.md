@@ -16,7 +16,7 @@ To install the library, clone the repository and install the dependencies:
 
 ```bash
 # Clone the repository
-git clone [https://github.com/your-repo/security-navigator.git](https://github.com/nasarmientoo/naisma_24)
+git clone https://github.com/nasarmientoo/naisma_24
 
 # Navigate to the project directory
 cd security-navigator
