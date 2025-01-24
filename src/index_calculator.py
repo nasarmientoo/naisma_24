@@ -32,9 +32,13 @@ class IndexCalculator:
         self.datasets = datasets
         self.weights = weights
 
-    def calculate_index(self):
+    def calculate_index(self, normalize=True, handle_outliers=True):
         """
         Calculate the security index for each polygon in the boundaries.
+
+        Parameters:
+        - normalize (bool): Whether to normalize the index to a 0-1 range.
+        - handle_outliers (bool): Whether to cap outliers using quantiles.
 
         Returns:
         - GeoDataFrame: Boundaries with an added 'security_index' column.
@@ -43,38 +47,43 @@ class IndexCalculator:
         self.boundaries["security_index"] = 0.0
 
         for dataset in self.datasets:
-            # Ensure the dataset has a geometry column
             if "geometry" not in dataset.columns:
                 raise ValueError("Each dataset must have a 'geometry' column with point geometries.")
 
-            # Spatial join to associate points with polygons
             joined = gpd.sjoin(self.boundaries, dataset, how="left", predicate="contains")
-
-            # Ensure the index is aligned properly
             joined = joined.reset_index()
 
-            # Calculate weighted sum for each polygon
-            for attribute, weight in self.weights.items():
+            for weight in self.weights:
+                attribute = weight['attribute']
                 if attribute in joined.columns:
                     try:
-                        joined[attribute] = pd.to_numeric(joined[attribute], errors='coerce').fillna(0) * weight
+                        joined[attribute] = pd.to_numeric(joined[attribute], errors='coerce').fillna(0)
                     except Exception as e:
                         console.print(f"[error]Error processing attribute '{attribute}': {e}[/error]", style="error")
 
-            # Remove the geometry column to avoid aggregation errors
             if "geometry" in joined.columns:
                 joined = joined.drop(columns=["geometry"])
 
-            # Aggregate the weighted values by polygon
             aggregated = joined.groupby("index").sum()
 
-            # Add the weighted sum to the security index
-            self.boundaries.loc[aggregated.index, "security_index"] += aggregated[[col for col in self.weights if col in aggregated.columns]].sum(axis=1)
+            for weight in self.weights:
+                attribute = weight['attribute']
+                attr_weight = weight.get('weight', 1)
+                if attribute in aggregated.columns:
+                    self.boundaries.loc[aggregated.index, "security_index"] += aggregated[attribute] * attr_weight
 
-        # Normalize the security index
-        max_index = self.boundaries["security_index"].max()
-        if max_index > 0:
-            self.boundaries["security_index"] = self.boundaries["security_index"] / max_index
+        if handle_outliers:
+            q1 = self.boundaries["security_index"].quantile(0.25)
+            q3 = self.boundaries["security_index"].quantile(0.75)
+            iqr = q3 - q1
+            lower_bound = q1 - 1.5 * iqr
+            upper_bound = q3 + 1.5 * iqr
+            self.boundaries["security_index"] = self.boundaries["security_index"].clip(lower=lower_bound, upper=upper_bound)
+
+        if normalize:
+            max_index = self.boundaries["security_index"].max()
+            if max_index > 0:
+                self.boundaries["security_index"] = self.boundaries["security_index"] / max_index
 
         console.print(f"[success]Security index successfully calculated for all polygons.[/success]", style="success")
         return self.boundaries

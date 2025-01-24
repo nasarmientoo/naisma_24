@@ -5,7 +5,7 @@ Users can specify weights for each variable to calculate the security index.
 """
 from rich.console import Console
 from rich.theme import Theme
-from rich.table import Table
+import geopandas as gpd
 import pandas as pd
 
 # Define the theme
@@ -18,79 +18,58 @@ custom_theme = Theme({
 })
 console = Console(theme=custom_theme)
 
-def one_hot_encode(df, columns):
-    """
-    Apply one-hot encoding to the specified columns.
-
-    Parameters:
-    - df (pd.DataFrame): The dataset.
-    - columns (list of str): List of column names to encode.
-
-    Returns:
-    - pd.DataFrame: The dataset with one-hot encoded columns.
-    """
-    console.print(f"[info]Applying one-hot encoding to columns: {columns}[/info]", style="info")
-    return pd.get_dummies(df, columns=columns, drop_first=True)
-
 class WeightManager:
     def __init__(self, weights):
         """
         Initialize the WeightManager class.
 
         Parameters:
-        - weights (dict): Dictionary of user-assigned weights for attributes.
+        - weights (list of dict): List of dictionaries defining attributes, their severity mappings, and optional weights.
+          
         """
         self.weights = weights
+        self.normalize_weights()
 
-    def prepare_and_process(self, datasets):
+    def normalize_weights(self):
         """
-        Prepare dataset for the security index calculator by handling non-numerical values
-        and displaying weights consistently for the one-hot encoded attributes.
+        Normalize the weights so that they sum up to 1.
+        """
+        total_weight = sum(weight.get('weight', 1) for weight in self.weights)
+        for weight in self.weights:
+            if 'weight' in weight:
+                weight['weight'] = weight['weight'] / total_weight
+
+        console.print("[info]Weights have been normalized.", style="info")
+
+    def apply_severity(self, datasets):
+        """
+        Apply severity levels to the specified attributes in the datasets.
 
         Parameters:
         - datasets (list of GeoDataFrames): The point-based spatial datasets.
 
         Returns:
-        - dict: Dictionary mapping attributes to their assigned weights.
+        - List of GeoDataFrames with severity levels and weights applied to the specified attributes.
         """
-        attribute_weights = {}
+        processed_datasets = []
 
         for dataset in datasets:
             df = dataset.copy()
 
-            # Identify non-numerical columns that are in weights
-            non_numerical_columns = [col for col in df.select_dtypes(exclude=['number']).columns if col in self.weights]
+            for weight in self.weights:
+                attribute = weight['attribute']
+                severity = weight['severity']
+                attr_weight = weight.get('weight', 1)  
 
-            # Table for displaying attributes and weights
-            table = Table(title="Processed Attributes and Weights", show_lines=True)
-            table.add_column("Attribute", justify="left", style="info")
-            table.add_column("Weight", justify="center", style="highlight")
-
-            # Apply one-hot encoding to non-numerical columns
-            if len(non_numerical_columns) > 0:
-                console.print(f"[info]One-hot encoding attributes: {non_numerical_columns}[/info]", style="info")
-                df = one_hot_encode(df, non_numerical_columns)
-
-                # Assign the same weight to all one-hot encoded columns
-                for original_column in non_numerical_columns:
-                    matching_columns = [col for col in df.columns if col.startswith(f"{original_column}_")]
-                    original_weight = self.weights[original_column]
-                    distributed_weight = original_weight / len(matching_columns)
-
-                    for col in matching_columns:
-                        attribute_weights[col] = distributed_weight
-                        table.add_row(col, str(distributed_weight))
-
-            # Assign weights only to specified attributes
-            for attribute, weight in self.weights.items():
                 if attribute in df.columns:
-                    attribute_weights[attribute] = weight
-                    table.add_row(attribute, str(weight))
+                    console.print(f"[info]Processing attribute '{attribute}' with defined severities and weight {attr_weight}.[/info]", style="info")
+
+                    # Map severities to the attribute values and apply the weight
+                    df[attribute] = df[attribute].astype(str).map(severity).fillna(1) * attr_weight
                 else:
                     console.print(f"[warning]Attribute '{attribute}' not found in dataset. Skipping...[/warning]", style="warning")
 
-            # Display processed attributes in a table
-            console.print(table)
+            processed_datasets.append(df)
 
-        console.print(f"[success]Attributes and weights have been successfully processed![/success]", style="success")
-        return attribute_weights
+        console.print(f"[success]Severity levels and weights successfully applied to specified attributes.[/success]", style="success")
+        return processed_datasets

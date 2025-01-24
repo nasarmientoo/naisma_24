@@ -5,7 +5,6 @@ from rich.console import Console
 from rich.theme import Theme
 from rich.panel import Panel
 
-# Initialize console
 console = Console()
 
 # Fancy Welcome Message
@@ -22,7 +21,7 @@ welcome_message = Panel(
 )
 console.print(welcome_message)
 
-# Step 1: Load boundaries and datasets
+# Load boundaries and datasets
 data_loader = DataLoader('data/boston_neighborhoods.geojson', ['data/cleaned_crimes.csv'])
 boundaries = data_loader.load_boundaries()
 datasets = data_loader.load_datasets()
@@ -31,23 +30,33 @@ datasets = data_loader.load_datasets()
 for i, dataset in enumerate(datasets):
     if 'OFFENSE_CODE' in dataset.columns:
         datasets[i]['OFFENSE_CODE'] = dataset['OFFENSE_CODE'].astype(str)
-    if 'MONTH' in dataset.columns:
-        datasets[i]['MONTH'] = dataset['MONTH'].astype(str)
 
-# Step 2: Prepare and process datasets with WeightManager
-weights = {
-    'OFFENSE_CODE': 0.5,  
-    'MONTH': 0.2        
-}
+weights = [
+    {
+        'attribute': 'OFFENSE_CODE',
+        'weight': 0.8,
+        'severity':{
+            '619': 3,
+            '3410': 4,
+            '3301': 1
+        }
+    },
+    {
+        'attribute': 'SHOOTING',
+        'weight': 0.2,
+        'severity':{
+            'Y': 2,
+        }
+    } 
+]
 
+#Apply WeightManager to process the datasets
 weight_manager = WeightManager(weights)
-processed_weights = weight_manager.prepare_and_process(datasets)
+processed_datasets = weight_manager.apply_severity(datasets)
 
-# Step 3: Calculate the security index with IndexCalculator
-index_calculator = IndexCalculator(boundaries, datasets, processed_weights)
-boundaries_with_index = index_calculator.calculate_index()
-
-# Step 4: Display the calculated security index
+#Calculate the security index using IndexCalculator
+index_calculator = IndexCalculator(boundaries, processed_datasets, weights)
+boundaries_with_index = index_calculator.calculate_index(normalize=True, handle_outliers=True)
 index_calculator.display_results()
 
 output_path = 'data/boundaries_with_index.geojson'
