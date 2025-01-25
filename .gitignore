@@ -1,0 +1,7 @@
+ECHO est� activado.
+*.pyc
+__pycache__/
+.ipynb_checkpoints/
+outputs/
+data/boundaries_with_index.geojson
+.virtual_documents/
