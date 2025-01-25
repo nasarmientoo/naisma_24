@@ -1,0 +1,13 @@
+ECHO est� activado.
+# Normalize all text files to LF in the repository
+* text=auto
+
+# Force specific file types to always use LF
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+
+# Ensure binary files are not modified
+*.png binary
+*.jpg binary
+*.geojson binary

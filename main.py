@@ -1,9 +1,13 @@
+import os
 from src.data_loader import DataLoader
 from src.weight_manager import WeightManager
 from src.index_calculator import IndexCalculator
+from src.visualizer import Visualizer
 from rich.console import Console
 from rich.theme import Theme
 from rich.panel import Panel
+
+os.makedirs("outputs", exist_ok=True)
 
 console = Console()
 
@@ -61,3 +65,48 @@ index_calculator.display_results()
 
 output_path = 'data/boundaries_with_index.geojson'
 boundaries_with_index.to_file(output_path, driver='GeoJSON')
+
+"""
+# Choropleth Plot
+Visualizer.plot_choropleth(
+    geodataframe=boundaries_with_index,
+    column="security_index",
+    title="Security Index Map",
+    boundaries=boundaries,  
+    cmap="viridis",  # Using a built-in Matplotlib colormap
+    save_path="outputs/security_index_map.png"
+)
+"""
+
+# Choropleth Plot with custom color palette
+custom_palette = ["#f7fcf0", "#ccebc5", "#a8ddb5", "#7bccc4", "#43a2ca", "#0868ac"]
+
+Visualizer.plot_choropleth(
+    geodataframe=boundaries_with_index,
+    column="security_index",
+    title="Security Index Map with Custom Colors",
+    boundaries=boundaries,
+    cmap=custom_palette,  # Using a custom color palette
+    save_path="outputs/security_index_map_with_custom_palette.png"
+)
+
+#Density Plot
+Visualizer.plot_density(
+    processed_datasets[0],
+    boundaries=boundaries,
+    title="Point Density Map",
+    save_path="outputs/crime_density_heatmap.png"
+)
+
+#Plot Histogram 
+Visualizer.plot_histogram(
+    data=boundaries_with_index,
+    column="security_index",
+    bins=15,  # Number of bins
+    title="Security Index Histogram",
+    xlabel="Security Index",
+    save_path="outputs/security_index_histogram.png"
+)
+
+
+

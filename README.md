@@ -107,6 +107,71 @@ boundaries_with_index.to_file('data/boundaries_with_index.geojson', driver='GeoJ
 
 ---
 
+
+### 4. **Visualier**
+The `Visualizer` module provides tools to create visual representations of your geospatial data. You can generate choropleth maps, density maps, and histograms to gain insights into the spatial distribution of your data.
+
+#### Key Features:
+- Generate choropleth maps for geospatial polygons using customizable color palettes.
+- Plot density maps to visualize the density of point-based datasets.
+- Create histograms to understand the distribution of specific attributes.
+
+#### Examples
+#### Choropleth Map:
+```python
+from src.visualizer import Visualizer
+
+Visualizer.plot_choropleth(
+    geodataframe=boundaries_with_index,
+    column="security_index",
+    title="Security Index Map",
+    boundaries=boundaries,  
+    cmap="viridis",  # Using a built-in Matplotlib colormap
+    save_path="outputs/security_index_map.png"
+)
+```
+#### Choropleth Map with Custom Color Palette:
+```python
+from src.visualizer import Visualizer
+
+custom_palette = ["#f7fcf0", "#ccebc5", "#a8ddb5", "#7bccc4", "#43a2ca", "#0868ac"]
+
+Visualizer.plot_choropleth(
+    geodataframe=boundaries_with_index,
+    column="security_index",
+    title="Security Index Map with Custom Colors",
+    boundaries=boundaries,
+    cmap=custom_palette,  # Using a custom color palette
+    save_path="outputs/security_index_map_with_custom_palette.png"
+)
+```
+#### Density Map:
+```python
+from src.visualizer import Visualizer
+
+Visualizer.plot_density(
+    processed_datasets[0],
+    boundaries=boundaries,
+    title="Point Density Map",
+    save_path="outputs/crime_density_heatmap.png"
+)
+```
+#### Histogram:
+```python
+from src.visualizer import Visualizer
+
+Visualizer.plot_histogram(
+    data=boundaries_with_index,
+    column="security_index",
+    bins=15,  # Number of bins
+    title="Security Index Histogram",
+    xlabel="Security Index",
+    save_path="outputs/security_index_histogram.png"
+)
+
+```
+---
+
 ## Contributing
 We welcome contributions to enhance this library! If you encounter any issues or have ideas for improvement, feel free to submit a pull request or open an issue.
 
@@ -119,7 +184,7 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 
 ## Contact
 For any inquiries or support, please reach out to us:
-- **Email**: natalyalejandra.sarmiento@polimi.it
+- **Email**: natalyalejandra.sarmiento@mail.polimi.it, mariafernanda.molina@mail.polimi.it, claudiaisabela.saud@mail.polimi.it
 - **GitHub**: (https://github.com/nasarmientoo/naisma_24)
 
 ---
