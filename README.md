@@ -7,7 +7,7 @@ Welcome to the **Security Navigator Library**, your go-to geospatial tool for an
 - **Weight Manager**: Define and apply severities and weights to attributes in datasets.
 - **Index Calculator**: Calculate and normalize security indices for geospatial polygons.
 - **GeoUtils (coming soon)**: Handle advanced geospatial operations.
-- **Visualizer (coming soon)**: Generate heatmaps and visual representations of your security indices.
+- **Visualizer: Generate heatmaps and visual representations of your security indices.
 
 ---
 
