@@ -108,5 +108,30 @@ Visualizer.plot_histogram(
     save_path="outputs/security_index_histogram.png"
 )
 
+# Centroid Calculation
+centroid_boundaries = GeoUtils.calculate_centroids(boundaries_with_index)
+
+# Ensure centroids are the active geometry before saving
+centroid_boundaries = centroid_boundaries.set_geometry("centroid").drop(columns=["geometry"])
+
+# Save to file
+centroid_boundaries.to_file("data/centroid_boundaries.geojson", driver="GeoJSON")
+console.print("Centroids saved in data/centroid_boundaries.geojson")
+
+# Visualize Centroids
+Visualizer.plot_centroids(
+    centroid_boundaries,
+    boundaries=boundaries,
+    title="Centroids of Security Zones",
+    save_path="outputs/centroids_map.png"
+)
+
+# Remove low-security areas and save separately
+filtered_boundaries = GeoUtils.remove_low_security_areas(boundaries_with_index, column="security_index", threshold=0.2)
+filtered_boundaries.to_file("data/filtered_boundaries.geojson", driver="GeoJSON")
+console.print("Filtered boundaries saved in data/filtered_boundaries.geojson")
+
+# Print remaining polygons after filtering
+console.print(f"Polygons remaining after filtering: {len(filtered_boundaries)}")
 
 
