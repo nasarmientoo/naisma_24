@@ -146,3 +146,44 @@ class Visualizer:
             plt.close()
         except Exception as e:
             console.print(f"[error]Error generating histogram: {e}[/error]", style="error")
+
+    @staticmethod
+    def plot_centroids(centroid_geodataframe, boundaries=None, title="Centroids Map", save_path=None):
+        """
+        Plot centroids of polygons with optional boundary overlay.
+
+        Parameters:
+        - centroid_geodataframe (GeoDataFrame): Input GeoDataFrame containing centroids.
+        - boundaries (GeoDataFrame): Optional GeoDataFrame for boundary overlay.
+        - title (str): Title of the plot.
+        - save_path (str): Path to save the plot (optional).
+
+        Returns:
+        - None
+        """
+        try:
+            # Create plot
+            fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+            
+            # Plot boundaries if provided
+            if boundaries is not None:
+                boundaries.plot(ax=ax, edgecolor="black", linewidth=0.5, facecolor="none")
+
+            # Plot centroids
+            centroid_geodataframe.plot(
+                ax=ax, color="red", marker="o", markersize=30, alpha=0.7, label="Centroids"
+            )
+
+            # Set title
+            ax.set_title(title)
+            ax.legend()
+
+            # Save the figure if a save path is provided
+            if save_path:
+                plt.savefig(save_path, dpi=300)
+                console.print(f"[success]Centroid plot saved at {save_path}.[/success]", style="success")
+
+            plt.show(block=False)
+            plt.close()
+        except Exception as e:
+            console.print(f"[error]Error generating centroid plot: {e}[/error]", style="error")
