@@ -111,9 +111,43 @@ boundaries_with_index.to_file('data/boundaries_with_index.geojson', driver='GeoJ
 ```
 
 ---
+### 4. **GeoUtils**
+The `GeoUtils`  module provides advanced geospatial operations for working with GeoDataFrames. It includes functionalities to calculate centroids of polygons and filter polygons based on specified conditions.
 
+#### Key Features:
+- Automatically calculate the centroids of polygons. 
+- Remove polygons that do not meet specified criteria, such as having a security index below a certain threshold.
 
-### 4. **Visualier**
+#### Example:
+#### Centroid Calculation:
+```python
+from src.geo_utils import GeoUtils
+
+# Calculate centroids
+centroid_boundaries = GeoUtils.calculate_centroids(boundaries_with_index)
+
+# Save centroids to a GeoJSON file
+centroid_boundaries.to_file("data/centroid_boundaries.geojson", driver="GeoJSON")
+
+```
+#### Filtering Polygons by Security Index:
+```python
+from src.geo_utils import GeoUtils
+
+# Filter polygons with a security index below 0.2
+filtered_boundaries = GeoUtils.remove_low_security_areas(
+    geodataframe=boundaries_with_index, 
+    column="security_index", 
+    threshold=0.2
+)
+
+# Save the filtered polygons to a GeoJSON file
+filtered_boundaries.to_file("data/filtered_boundaries.geojson", driver="GeoJSON")
+
+```
+---
+
+### 5. **Visualier**
 The `Visualizer` module provides tools to create visual representations of your geospatial data. You can generate choropleth maps, density maps, histograms, and centroid maps to gain insights into the spatial distribution of your data.
 
 #### Key Features:
