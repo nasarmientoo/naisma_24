@@ -3,6 +3,7 @@ from src.data_loader import DataLoader
 from src.weight_manager import WeightManager
 from src.index_calculator import IndexCalculator
 from src.visualizer import Visualizer
+from src.geo_utils import GeoUtils
 from rich.console import Console
 from rich.theme import Theme
 from rich.panel import Panel
