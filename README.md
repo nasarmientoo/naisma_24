@@ -170,6 +170,118 @@ Visualizer.plot_histogram(
 )
 
 ```
+# Security Navigator Library - Testing Guide
+
+## Overview
+This document provides an in-depth overview of the testing scripts for the **Security Navigator Library**. This library includes modules for loading geospatial data, applying weighted attributes, calculating security indices, and visualizing the results. These tests ensure that all components function correctly, handle edge cases properly, and integrate smoothly within the system.
+
+## Testing Scripts
+The following test scripts validate both the individual functionalities of each module and the complete pipeline of the library:
+
+### 1. `test_data_loader.py`
+**Purpose:**
+- Validates the loading of boundary files (GeoJSON, Shapefile, GeoPackage).
+- Ensures point-based datasets (CSV) are correctly converted to GeoDataFrames.
+- Checks for required columns (`LONGITUDE`, `LATITUDE`).
+- Tests handling of empty or malformed files.
+- Verifies that out-of-bound points are properly filtered.
+
+**Run Command:**
+```bash
+pytest tests/test_data_loader.py
+```
+
+---
+### 2. `test_weight_manager.py`
+**Purpose:**
+- Ensures that weights are correctly normalized to sum to 1.
+- Verifies severity mappings are correctly applied to attributes.
+- Checks behavior when attributes are missing or contain unexpected values.
+- Tests handling of empty and malformed datasets.
+- Confirms that severity multipliers correctly influence security index calculations.
+
+**Run Command:**
+```bash
+pytest tests/test_weight_manager.py
+```
+
+---
+### 3. `test_index_calculator.py`
+**Purpose:**
+- Validates security index calculations based on weighted attributes.
+- Ensures normalization and outlier handling work correctly.
+- Tests with missing attributes or invalid datasets.
+- Verifies that index calculations scale appropriately across different dataset sizes.
+- Ensures that polygonal spatial joins correctly associate data with boundaries.
+
+**Run Command:**
+```bash
+pytest tests/test_index_calculator.py
+```
+
+---
+### 4. `test_visualizer.py`
+**Purpose:**
+- Ensures that choropleth, density, and histogram plots are generated correctly.
+- Checks that plots are saved as images in the expected directories.
+- Tests invalid or empty datasets for graceful error handling.
+- Confirms that custom color palettes are applied correctly.
+- Validates that density maps represent data distribution accurately.
+
+**Run Command:**
+```bash
+pytest tests/test_visualizer.py
+```
+
+---
+### 5. `test_pipeline.py`
+**Purpose:**
+- Tests full integration of all modules in sequence.
+- Loads test boundary and dataset files and validates preprocessing steps.
+- Applies weight processing and ensures consistency across datasets.
+- Computes security indices and checks expected results against baseline values.
+- Generates and validates visual outputs, ensuring correct file exports.
+- Handles potential errors that could disrupt the full pipeline execution.
+
+**Run Command:**
+```bash
+pytest tests/test_pipeline.py
+```
+
+## Running All Tests
+To execute all tests at once, use:
+```bash
+pytest tests/
+```
+
+For more detailed output, run:
+```bash
+pytest -v tests/
+```
+
+## Coverage Analysis
+To analyze test coverage and identify untested code paths, install and use `pytest-cov`:
+```bash
+pip install pytest-cov
+pytest --cov=src tests/
+```
+This will generate a report showing how much of the code is tested.
+
+## Additional Notes
+- Ensure all required dependencies are installed before running tests:
+  ```bash
+  pip install -r requirements.txt
+  ```
+- Run tests inside a virtual environment to avoid conflicts with system dependencies:
+  ```bash
+  python -m venv env
+  source env/bin/activate  # Windows: env\Scripts\activate
+  ```
+- If tests fail, use `pytest --tb=short` to get a concise traceback of errors.
+- To rerun only failed tests:
+  ```bash
+  pytest --lf
+  ```
 ---
 
 ## Contributing
