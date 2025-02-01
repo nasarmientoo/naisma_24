@@ -6,6 +6,8 @@ from data_loader import DataLoader
 from weight_manager import WeightManager
 from index_calculator import IndexCalculator
 from visualizer import Visualizer
+from geo_utils import GeoUtils
+
 
 # Setup Mock Data
 os.makedirs("data", exist_ok=True)
@@ -75,7 +77,29 @@ boundaries_with_index = index_calculator.calculate_index(normalize=True, handle_
 assert 'security_index' in boundaries_with_index.columns, "Boundaries should have 'security_index'"
 assert boundaries_with_index['security_index'].max() <= 1, "Security index should be normalized to 1"
 
-# Step 4: Generate Visualizations
+# Step 4: Test GeoUtils Functions
+# Centroid Calculation
+centroid_boundaries = GeoUtils.calculate_centroids(boundaries_with_index)
+assert "centroid" in centroid_boundaries.columns, "Centroid column should exist"
+assert centroid_boundaries["centroid"].geom_type[0] == "Point", "Centroids should be of type Point"
+
+# Save Centroid Map
+Visualizer.plot_centroids(
+    centroid_boundaries,
+    boundaries=boundaries,
+    title="Centroids of Security Zones",
+    save_path="outputs/centroids_map.png"
+)
+assert os.path.exists("outputs/centroids_map.png"), "Centroids map not saved"
+
+# Remove low-security areas
+threshold = 0.2
+filtered_boundaries = GeoUtils.remove_low_security_areas(boundaries_with_index, column="security_index", threshold=threshold)
+assert all(filtered_boundaries["security_index"] >= threshold), "Filtered boundaries should have security_index >= threshold"
+assert len(filtered_boundaries) < len(boundaries_with_index), "Some polygons should be removed"
+
+
+# Step 5: Generate Visualizations
 Visualizer.plot_choropleth(
     geodataframe=boundaries_with_index,
     column="security_index",
