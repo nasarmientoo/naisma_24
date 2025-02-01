@@ -6,8 +6,13 @@ Welcome to the **Security Navigator Library**, your go-to geospatial tool for an
 - **Data Loader**: Load and validate boundaries and datasets in various geospatial formats.
 - **Weight Manager**: Define and apply severities and weights to attributes in datasets.
 - **Index Calculator**: Calculate and normalize security indices for geospatial polygons.
-- **GeoUtils**: Handle geospatial operations.
-- **Visualizer**: Generate heatmaps and visual representations of your security indices.
+- **GeoUtils**: Handle advanced geospatial operations such as centroid calculation and filtering polygons based on conditions.
+- **Visualizer**: Generate a variety of visualizations, including:
+    - Choropleth maps with customizable color palettes.
+    - Density maps to visualize the spatial distribution of points.
+    - Histograms for attribute distribution analysis.
+    - Centroid maps for polygon visualization.
+
 
 ---
 
@@ -109,12 +114,13 @@ boundaries_with_index.to_file('data/boundaries_with_index.geojson', driver='GeoJ
 
 
 ### 4. **Visualier**
-The `Visualizer` module provides tools to create visual representations of your geospatial data. You can generate choropleth maps, density maps, and histograms to gain insights into the spatial distribution of your data.
+The `Visualizer` module provides tools to create visual representations of your geospatial data. You can generate choropleth maps, density maps, histograms, and centroid maps to gain insights into the spatial distribution of your data.
 
 #### Key Features:
 - Generate choropleth maps for geospatial polygons using customizable color palettes.
 - Plot density maps to visualize the density of point-based datasets.
 - Create histograms to understand the distribution of specific attributes.
+- Plot centroids of polygons with optional boundary overlays.
 
 #### Examples
 #### Choropleth Map:
@@ -167,6 +173,18 @@ Visualizer.plot_histogram(
     title="Security Index Histogram",
     xlabel="Security Index",
     save_path="outputs/security_index_histogram.png"
+)
+
+```
+#### Centroid Map:
+```python
+from src.visualizer import Visualizer
+
+Visualizer.plot_centroids(
+    centroid_geodataframe=centroid_boundaries,
+    boundaries=boundaries,  # Optional: Overlay boundaries
+    title="Centroids of Security Zones",
+    save_path="outputs/centroids_map.png"
 )
 
 ```
