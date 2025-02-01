@@ -147,7 +147,7 @@ filtered_boundaries.to_file("data/filtered_boundaries.geojson", driver="GeoJSON"
 ```
 ---
 
-### 5. **Visualier**
+### 5. **Visualizer**
 The `Visualizer` module provides tools to create visual representations of your geospatial data. You can generate choropleth maps, density maps, histograms, and centroid maps to gain insights into the spatial distribution of your data.
 
 #### Key Features:
