@@ -245,7 +245,7 @@ The following test scripts validate both the individual functionalities of each 
 
 **Run Command:**
 ```bash
-pytest tests/test_data_loader.py
+pytest tests/data_load_test.py
 ```
 
 ---
@@ -259,7 +259,7 @@ pytest tests/test_data_loader.py
 
 **Run Command:**
 ```bash
-pytest tests/test_weight_manager.py
+pytest tests/weight_manager_test.py
 ```
 
 ---
@@ -273,7 +273,7 @@ pytest tests/test_weight_manager.py
 
 **Run Command:**
 ```bash
-pytest tests/test_index_calculator.py
+pytest tests/index_calc_test.py
 ```
 ---
 ### 4. `geo_utils_test.py`
@@ -299,11 +299,11 @@ pytest tests/geo_utils_test.py
 
 **Run Command:**
 ```bash
-pytest tests/test_visualizer.py
+pytest tests/vis_test.py
 ```
 
 ---
-### 6. `test_pipeline.py`
+### 6. `test_main.py`
 **Purpose:**
 - Tests full integration of all modules in sequence.
 - Loads test boundary and dataset files and validates preprocessing steps.
@@ -314,7 +314,7 @@ pytest tests/test_visualizer.py
 
 **Run Command:**
 ```bash
-pytest tests/test_pipeline.py
+pytest tests/main_test.py
 ```
 
 ## Running All Tests
