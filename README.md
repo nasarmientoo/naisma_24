@@ -245,7 +245,7 @@ The following test scripts validate both the individual functionalities of each 
 
 **Run Command:**
 ```bash
-pytest tests/data_load_test.py
+python -m function_tests.data_load_test.py
 ```
 
 ---
@@ -259,7 +259,7 @@ pytest tests/data_load_test.py
 
 **Run Command:**
 ```bash
-pytest tests/weight_manager_test.py
+python -m function_tests.weight_manager_test.py
 ```
 
 ---
@@ -273,7 +273,7 @@ pytest tests/weight_manager_test.py
 
 **Run Command:**
 ```bash
-pytest tests/index_calc_test.py
+python -m function_tests.index_calc_test.py
 ```
 ---
 ### 4. `geo_utils_test.py`
@@ -286,7 +286,7 @@ pytest tests/index_calc_test.py
 
 **Run Command:**
 ```bash
-pytest tests/geo_utils_test.py
+python -m function_tests.geo_utils_test.py
 ```
 ---
 ### 5. `test_visualizer.py`
@@ -299,7 +299,7 @@ pytest tests/geo_utils_test.py
 
 **Run Command:**
 ```bash
-pytest tests/vis_test.py
+python -m function_tests.vis_test.py
 ```
 
 ---
@@ -314,18 +314,18 @@ pytest tests/vis_test.py
 
 **Run Command:**
 ```bash
-pytest tests/main_test.py
+python -m function_tests.main_test.py
 ```
 
 ## Running All Tests
 To execute all tests at once, use:
 ```bash
-pytest tests/
+pytest function_tests/
 ```
 
 For more detailed output, run:
 ```bash
-pytest -v tests/
+pytest -v -function_tests/
 ```
 
 ## Coverage Analysis
