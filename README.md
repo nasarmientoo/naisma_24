@@ -275,9 +275,21 @@ pytest tests/test_weight_manager.py
 ```bash
 pytest tests/test_index_calculator.py
 ```
-
 ---
-### 4. `test_visualizer.py`
+### 4. `geoutils.py`
+**Purpose:**
+- Validates the centroid calculation function, ensuring centroids are correctly computed.
+- Ensures that centroids are generated in the correct Coordinate Reference System (CRS).
+- Tests the polygon filtering function, verifying that polygons are correctly removed based on a security index threshold.
+- Checks for errors when handling empty or invalid datasets.
+- Confirms that transformed geometries are correctly stored in the GeoDataFrame.
+
+**Run Command:**
+```bash
+pytest tests/test_geoutils.py
+```
+---
+### 5. `test_visualizer.py`
 **Purpose:**
 - Ensures that choropleth, density, and histogram plots are generated correctly.
 - Checks that plots are saved as images in the expected directories.
@@ -291,7 +303,7 @@ pytest tests/test_visualizer.py
 ```
 
 ---
-### 5. `test_pipeline.py`
+### 6. `test_pipeline.py`
 **Purpose:**
 - Tests full integration of all modules in sequence.
 - Loads test boundary and dataset files and validates preprocessing steps.
