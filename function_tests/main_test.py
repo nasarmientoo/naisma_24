@@ -2,11 +2,11 @@ import os
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Point, Polygon
-from data_loader import DataLoader
-from weight_manager import WeightManager
-from index_calculator import IndexCalculator
-from visualizer import Visualizer
-from geo_utils import GeoUtils
+from src.data_loader import DataLoader
+from src.weight_manager import WeightManager
+from src.index_calculator import IndexCalculator
+from src.visualizer import Visualizer
+from src.geo_utils import GeoUtils
 
 
 # Setup Mock Data

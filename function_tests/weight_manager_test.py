@@ -1,4 +1,4 @@
-from weight_manager import WeightManager
+from src.weight_manager import WeightManager
 import geopandas as gpd
 from shapely.geometry import Point
 

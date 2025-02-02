@@ -1,4 +1,4 @@
-from visualizer import Visualizer
+from src.visualizer import Visualizer
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Point, Polygon

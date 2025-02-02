@@ -1,4 +1,4 @@
-from data_loader import DataLoader
+from src.data_loader import DataLoader
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Polygon, Point

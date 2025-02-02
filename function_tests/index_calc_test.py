@@ -1,4 +1,4 @@
-from index_calculator import IndexCalculator
+from src.index_calculator import IndexCalculator
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import Polygon, Point
