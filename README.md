@@ -1,6 +1,6 @@
-# Security Navigator Library
+# Geospatial Security Index Library
 
-Welcome to the **Security Navigator Library**, your go-to geospatial tool for analyzing, managing, and visualizing security-related data. This library offers an intuitive and robust framework to process geospatial datasets, calculate security indices, and generate actionable insights for decision-making.
+Welcome to the **Geospatial Security Index Library**, your go-to geospatial tool for analyzing, managing, and visualizing security-related data. This library offers an intuitive and robust framework to process geospatial datasets, calculate security indices, and generate actionable insights for decision-making.
 
 ## Features
 - **Data Loader**: Load and validate boundaries and datasets in various geospatial formats.
