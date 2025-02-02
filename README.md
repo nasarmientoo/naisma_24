@@ -4,8 +4,8 @@ Welcome to the **Geospatial Security Index Library**, your go-to geospatial tool
 
 ## Data Requirements
 To use this library effectively, you need:
-Geospatial Boundaries: A Shapefile (.shp) or GeoJSON (.geojson) file containing the boundaries of the city, region, or area you want to analyze.
-Security Data: A CSV (.csv) or Excel (.xlsx) file containing security-related incidents, crimes, or risk attributes with latitude and longitude coordinates.
+- Geospatial Boundaries: A Shapefile (.shp) or GeoJSON (.geojson) file containing the boundaries of the city, region, or area you want to analyze.
+- Security Data: A CSV (.csv) or Excel (.xlsx) file containing security-related incidents, crimes, or risk attributes with latitude and longitude coordinates.
 
 ## Features
 - **Data Loader**: Load and validate boundaries and datasets in various geospatial formats.
