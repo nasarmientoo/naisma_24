@@ -276,7 +276,7 @@ pytest tests/test_weight_manager.py
 pytest tests/test_index_calculator.py
 ```
 ---
-### 4. `geoutils.py`
+### 4. `geo_utils_test.py`
 **Purpose:**
 - Validates the centroid calculation function, ensuring centroids are correctly computed.
 - Ensures that centroids are generated in the correct Coordinate Reference System (CRS).
@@ -286,7 +286,7 @@ pytest tests/test_index_calculator.py
 
 **Run Command:**
 ```bash
-pytest tests/test_geoutils.py
+pytest tests/geo_utils_test.py
 ```
 ---
 ### 5. `test_visualizer.py`
