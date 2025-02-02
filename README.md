@@ -2,6 +2,11 @@
 
 Welcome to the **Geospatial Security Index Library**, your go-to geospatial tool for analyzing, managing, and visualizing security-related data. This library offers an intuitive and robust framework to process geospatial datasets, calculate security indices, and generate actionable insights for decision-making.
 
+## Data Requirements
+To use this library effectively, you need:
+Geospatial Boundaries: A Shapefile (.shp) or GeoJSON (.geojson) file containing the boundaries of the city, region, or area you want to analyze.
+Security Data: A CSV (.csv) or Excel (.xlsx) file containing security-related incidents, crimes, or risk attributes with latitude and longitude coordinates.
+
 ## Features
 - **Data Loader**: Load and validate boundaries and datasets in various geospatial formats.
 - **Weight Manager**: Define and apply severities and weights to attributes in datasets.
